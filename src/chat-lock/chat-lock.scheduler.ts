@@ -42,16 +42,6 @@ export class ChatLockScheduler {
                         can_send_other_messages: false,
                         can_add_web_page_previews: false,
                     });
-
-                    const alertMessage = await this.bot.telegram.sendMessage(
-                        lock.chatId,
-                        `🔒 **Quiet Hours Engaged**\nThis chat is locked until ${String(lock.unlockHour).padStart(2, '0')}:${String(lock.unlockMinute).padStart(2, '0')}.`,
-                        { parse_mode: 'Markdown' }
-                    );
-
-                    await this.bot.telegram.pinChatMessage(lock.chatId, alertMessage.message_id, {
-                        disable_notification: false
-                    });
                 } catch (error) {
                     await this.chatLockService.tryTransitionToUnlocked(lock.chatId);
                 }
@@ -74,14 +64,6 @@ export class ChatLockScheduler {
                         can_send_other_messages: true,
                         can_add_web_page_previews: true,
                     });
-
-                    await this.bot.telegram.unpinChatMessage(lock.chatId);
-
-                    await this.bot.telegram.sendMessage(
-                        lock.chatId,
-                        `🔓 **Quiet Hours Over**\nChat permissions have been restored.`,
-                        { parse_mode: 'Markdown' }
-                    );
                 } catch (error) {
                     await this.chatLockService.tryTransitionToLocked(lock.chatId);
                 }
