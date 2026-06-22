@@ -18,7 +18,7 @@ export { Prisma }
 export * as $Enums from './enums.js'
 export * from './enums.js';
 /**
- * Model GroupSettings
+ * Model ChatLock
  * 
  */
-export type GroupSettings = Prisma.GroupSettingsModel
+export type ChatLock = Prisma.ChatLockModel

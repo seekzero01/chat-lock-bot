@@ -51,7 +51,7 @@ export const AnyNull = runtime.AnyNull
 
 
 export const ModelName = {
-  GroupSettings: 'GroupSettings'
+  ChatLock: 'ChatLock'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -70,18 +70,23 @@ export const TransactionIsolationLevel = runtime.makeStrictEnum({
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
 
 
-export const GroupSettingsScalarFieldEnum = {
+export const ChatLockScalarFieldEnum = {
   id: 'id',
   chatId: 'chatId',
+  chatTitle: 'chatTitle',
+  lockHour: 'lockHour',
+  lockMinute: 'lockMinute',
+  unlockHour: 'unlockHour',
+  unlockMinute: 'unlockMinute',
   timezone: 'timezone',
-  startTime: 'startTime',
-  endTime: 'endTime',
-  enabled: 'enabled',
+  isLocked: 'isLocked',
+  lockedAt: 'lockedAt',
+  createdBy: 'createdBy',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
-export type GroupSettingsScalarFieldEnum = (typeof GroupSettingsScalarFieldEnum)[keyof typeof GroupSettingsScalarFieldEnum]
+export type ChatLockScalarFieldEnum = (typeof ChatLockScalarFieldEnum)[keyof typeof ChatLockScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -98,4 +103,12 @@ export const QueryMode = {
 } as const
 
 export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
+
+
+export const NullsOrder = {
+  first: 'first',
+  last: 'last'
+} as const
+
+export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
 

@@ -384,7 +384,7 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 
 
 export const ModelName = {
-  GroupSettings: 'GroupSettings'
+  ChatLock: 'ChatLock'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -400,81 +400,81 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "groupSettings"
+    modelProps: "chatLock"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
-    GroupSettings: {
-      payload: Prisma.$GroupSettingsPayload<ExtArgs>
-      fields: Prisma.GroupSettingsFieldRefs
+    ChatLock: {
+      payload: Prisma.$ChatLockPayload<ExtArgs>
+      fields: Prisma.ChatLockFieldRefs
       operations: {
         findUnique: {
-          args: Prisma.GroupSettingsFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$GroupSettingsPayload> | null
+          args: Prisma.ChatLockFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatLockPayload> | null
         }
         findUniqueOrThrow: {
-          args: Prisma.GroupSettingsFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$GroupSettingsPayload>
+          args: Prisma.ChatLockFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatLockPayload>
         }
         findFirst: {
-          args: Prisma.GroupSettingsFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$GroupSettingsPayload> | null
+          args: Prisma.ChatLockFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatLockPayload> | null
         }
         findFirstOrThrow: {
-          args: Prisma.GroupSettingsFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$GroupSettingsPayload>
+          args: Prisma.ChatLockFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatLockPayload>
         }
         findMany: {
-          args: Prisma.GroupSettingsFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$GroupSettingsPayload>[]
+          args: Prisma.ChatLockFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatLockPayload>[]
         }
         create: {
-          args: Prisma.GroupSettingsCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$GroupSettingsPayload>
+          args: Prisma.ChatLockCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatLockPayload>
         }
         createMany: {
-          args: Prisma.GroupSettingsCreateManyArgs<ExtArgs>
+          args: Prisma.ChatLockCreateManyArgs<ExtArgs>
           result: BatchPayload
         }
         createManyAndReturn: {
-          args: Prisma.GroupSettingsCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$GroupSettingsPayload>[]
+          args: Prisma.ChatLockCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatLockPayload>[]
         }
         delete: {
-          args: Prisma.GroupSettingsDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$GroupSettingsPayload>
+          args: Prisma.ChatLockDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatLockPayload>
         }
         update: {
-          args: Prisma.GroupSettingsUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$GroupSettingsPayload>
+          args: Prisma.ChatLockUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatLockPayload>
         }
         deleteMany: {
-          args: Prisma.GroupSettingsDeleteManyArgs<ExtArgs>
+          args: Prisma.ChatLockDeleteManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateMany: {
-          args: Prisma.GroupSettingsUpdateManyArgs<ExtArgs>
+          args: Prisma.ChatLockUpdateManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateManyAndReturn: {
-          args: Prisma.GroupSettingsUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$GroupSettingsPayload>[]
+          args: Prisma.ChatLockUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatLockPayload>[]
         }
         upsert: {
-          args: Prisma.GroupSettingsUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$GroupSettingsPayload>
+          args: Prisma.ChatLockUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChatLockPayload>
         }
         aggregate: {
-          args: Prisma.GroupSettingsAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateGroupSettings>
+          args: Prisma.ChatLockAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateChatLock>
         }
         groupBy: {
-          args: Prisma.GroupSettingsGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.GroupSettingsGroupByOutputType>[]
+          args: Prisma.ChatLockGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ChatLockGroupByOutputType>[]
         }
         count: {
-          args: Prisma.GroupSettingsCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.GroupSettingsCountAggregateOutputType> | number
+          args: Prisma.ChatLockCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ChatLockCountAggregateOutputType> | number
         }
       }
     }
@@ -517,18 +517,23 @@ export const TransactionIsolationLevel = runtime.makeStrictEnum({
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
 
 
-export const GroupSettingsScalarFieldEnum = {
+export const ChatLockScalarFieldEnum = {
   id: 'id',
   chatId: 'chatId',
+  chatTitle: 'chatTitle',
+  lockHour: 'lockHour',
+  lockMinute: 'lockMinute',
+  unlockHour: 'unlockHour',
+  unlockMinute: 'unlockMinute',
   timezone: 'timezone',
-  startTime: 'startTime',
-  endTime: 'endTime',
-  enabled: 'enabled',
+  isLocked: 'isLocked',
+  lockedAt: 'lockedAt',
+  createdBy: 'createdBy',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
-export type GroupSettingsScalarFieldEnum = (typeof GroupSettingsScalarFieldEnum)[keyof typeof GroupSettingsScalarFieldEnum]
+export type ChatLockScalarFieldEnum = (typeof ChatLockScalarFieldEnum)[keyof typeof ChatLockScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -545,6 +550,14 @@ export const QueryMode = {
 } as const
 
 export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
+
+
+export const NullsOrder = {
+  first: 'first',
+  last: 'last'
+} as const
+
+export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
 
 
 
@@ -564,6 +577,20 @@ export type StringFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 
  * Reference to a field of type 'String[]'
  */
 export type ListStringFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'String[]'>
+    
+
+
+/**
+ * Reference to a field of type 'Int'
+ */
+export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
+    
+
+
+/**
+ * Reference to a field of type 'Int[]'
+ */
+export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
     
 
 
@@ -589,16 +616,30 @@ export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaM
 
 
 /**
- * Reference to a field of type 'Int'
+ * Reference to a field of type 'BigInt'
  */
-export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
+export type BigIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BigInt'>
     
 
 
 /**
- * Reference to a field of type 'Int[]'
+ * Reference to a field of type 'BigInt[]'
  */
-export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+export type ListBigIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BigInt[]'>
+    
+
+
+/**
+ * Reference to a field of type 'Float'
+ */
+export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
+    
+
+
+/**
+ * Reference to a field of type 'Float[]'
+ */
+export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
     
 
 /**
@@ -711,7 +752,7 @@ export type PrismaClientOptions = ({
   queryPlanCacheMaxSize?: number
 }
 export type GlobalOmitConfig = {
-  groupSettings?: Prisma.GroupSettingsOmit
+  chatLock?: Prisma.ChatLockOmit
 }
 
 /* Types for Logging */

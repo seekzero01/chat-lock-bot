@@ -31,8 +31,8 @@ export * from "./enums.js"
  * const prisma = new PrismaClient({
  *   adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL })
  * })
- * // Fetch zero or more GroupSettings
- * const groupSettings = await prisma.groupSettings.findMany()
+ * // Fetch zero or more ChatLocks
+ * const chatLocks = await prisma.chatLock.findMany()
  * ```
  * 
  * Read more in our [docs](https://pris.ly/d/client).
@@ -42,7 +42,7 @@ export type PrismaClient<LogOpts extends Prisma.LogLevel = never, OmitOpts exten
 export { Prisma }
 
 /**
- * Model GroupSettings
+ * Model ChatLock
  * 
  */
-export type GroupSettings = Prisma.GroupSettingsModel
+export type ChatLock = Prisma.ChatLockModel

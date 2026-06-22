@@ -8,5 +8,5 @@
  *
  * 🟢 You can import this file directly.
  */
-export type * from './models/GroupSettings.js'
+export type * from './models/ChatLock.js'
 export type * from './commonInputTypes.js'

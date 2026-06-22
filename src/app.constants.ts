@@ -1,0 +1,1 @@
+export const CHAT_LOCK_BOT_NAME = 'ChatLockBot';

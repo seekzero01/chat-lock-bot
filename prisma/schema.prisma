@@ -12,13 +12,20 @@ datasource db {
   provider = "postgresql"
 }
 
-model GroupSettings {
-  id        String   @id @default(uuid())
-  chatId    String   @unique
-  timezone  String
-  startTime String
-  endTime   String
-  enabled   Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model ChatLock {
+  id           String    @id @default(cuid())
+  chatId       String    @unique
+  chatTitle    String?
+  lockHour     Int
+  lockMinute   Int
+  unlockHour   Int
+  unlockMinute Int
+  timezone     String    @default("UTC")
+  isLocked     Boolean   @default(false)
+  lockedAt     DateTime?
+  createdBy    BigInt
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@index([isLocked])
 }
