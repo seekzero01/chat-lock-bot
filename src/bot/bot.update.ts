@@ -6,11 +6,13 @@ import { SetHandler } from './handlers/set.handler';
 import { UnlockHandler } from './handlers/unlock.handler';
 import {StartHandler} from "./handlers/start.handler";
 import {HelpHandler} from "./handlers/help.handler";
+import {StatusHandler} from "./handlers/status.handler";
 
 @Update()
 export class BotUpdate {
     constructor(
         private readonly startHandler: StartHandler,
+        private readonly statusHandler: StatusHandler,
         private readonly helpHandler: HelpHandler,
         private readonly setHandler: SetHandler,
         private readonly unlockHandler: UnlockHandler,
@@ -38,5 +40,11 @@ export class BotUpdate {
     @UseGuards(AdminGuard)
     async onUnlock(ctx: Context) {
         await this.unlockHandler.handle(ctx);
+    }
+
+    @Command('status')
+    @UseGuards(AdminGuard)
+    async onStatus(ctx: Context) {
+        await this.statusHandler.handle(ctx);
     }
 }

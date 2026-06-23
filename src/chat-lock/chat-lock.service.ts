@@ -38,6 +38,23 @@ export class ChatLockService {
         }
     }
 
+    async findLock(chatId: string) {
+        try {
+            const lock = await this.prisma.chatLock.findUnique({ where: { chatId } });
+
+            if (!lock) {
+                throw new NotFoundException('No schedule found for this chat.');
+            }
+
+            return lock;
+        } catch (error) {
+            if (error instanceof NotFoundException) {
+                throw error;
+            }
+            throw error;
+        }
+    }
+
     async findAll() {
         return this.prisma.chatLock.findMany();
     }
