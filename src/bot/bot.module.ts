@@ -8,6 +8,7 @@ import {StartHandler} from "./handlers/start.handler";
 import {HelpHandler} from "./handlers/help.handler";
 import {TelegrafModule} from "nestjs-telegraf";
 import {session} from "telegraf";
+import {StatusHandler} from "./handlers/status.handler";
 
 @Module({
     imports: [
@@ -17,6 +18,6 @@ import {session} from "telegraf";
         }),
         ChatLockModule,
     ],
-    providers: [BotUpdate, StartHandler, HelpHandler, SetHandler, UnlockHandler, AdminGuard],
+    providers: [BotUpdate, StatusHandler, StartHandler, HelpHandler, SetHandler, UnlockHandler, AdminGuard],
 })
 export class BotModule {}
