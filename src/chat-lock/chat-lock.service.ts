@@ -47,6 +47,27 @@ export class ChatLockService {
         }
     }
 
+    async findLock(chatId: string) {
+        try {
+            const lock = await this.prisma.chatLock.findUnique({ where: { chatId } });
+
+            if (!lock) {
+                this.logger.warn(`Schedule lookup failed: No database record exists for chat ${chatId}`);
+                throw new NotFoundException('No schedule found for this chat.');
+            }
+
+            return lock;
+        } catch (error) {
+            if (!(error instanceof NotFoundException)) {
+                this.logger.error(
+                    `Database retrieval exception encountered while fetching schedule for chat ${chatId}`,
+                    error.stack
+                );
+            }
+            throw error;
+        }
+    }
+
     async findPendingLocks(): Promise<ChatLock[]> {
         try {
             return this.prisma.$queryRaw<ChatLock[]>`
