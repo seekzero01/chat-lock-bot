@@ -1,6 +1,7 @@
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { TelegrafExecutionContext } from 'nestjs-telegraf';
 import { Context } from 'telegraf';
+import {UserType, userTypes} from "../types";
 
 @Injectable()
 export class AdminGuard implements CanActivate {
@@ -14,7 +15,7 @@ export class AdminGuard implements CanActivate {
 
         try {
             const member = await ctx.telegram.getChatMember(ctx.chat.id, ctx.from.id);
-            return ['administrator', 'creator'].includes(member.status);
+            return userTypes.includes(member.status as UserType);
         } catch {
             return false;
         }

@@ -1,6 +1,5 @@
 import { config } from 'dotenv';
 import { Module } from '@nestjs/common';
-import {DatabaseService} from "./database.service";
 import pg from 'pg';
 
 config({
@@ -15,7 +14,7 @@ const dbProvider = {
 };
 
 @Module({
-    providers: [dbProvider, DatabaseService],
-    exports: [dbProvider, DatabaseService],
+    providers: [dbProvider],
+    exports: [dbProvider],
 })
 export class DatabaseModule {}
