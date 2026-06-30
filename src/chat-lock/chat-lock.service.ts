@@ -1,76 +1,79 @@
-import { Injectable, ConflictException, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
-import {ChatLock} from "../generated/prisma/client";
-import {AppLogger} from "../logger/app-logger.service";
-
-export interface CreateLockDto {
-    chatId: string;
-    chatTitle?: string;
-    lockHour: number;
-    lockMinute: number;
-    unlockHour: number;
-    unlockMinute: number;
-    timezone: string;
-    createdBy: bigint;
-}
+import { ChatLock } from '../generated/prisma/client';
+import { AppLogger } from '../logger/app-logger.service';
+import { CreateLockDto } from './dto/create-lock.dto';
+import { isPrismaClientExceptionWithCode } from '../common/utils/prisma-error.util';
+import { ScheduleConflictError } from '../common/errors/schedule-conflict.error';
+import { ScheduleNotFoundError } from '../common/errors/schedule-not-found.error';
 
 @Injectable()
 export class ChatLockService {
-    constructor(
-        private readonly logger: AppLogger,
-        private readonly prisma: PrismaService
-    ) {
-        this.logger.setContext(ChatLockService.name);
+  constructor(
+    private readonly logger: AppLogger,
+    private readonly prisma: PrismaService,
+  ) {
+    this.logger.setContext(ChatLockService.name);
+  }
+
+  async createLock(dto: CreateLockDto): Promise<ChatLock> {
+    try {
+      return await this.prisma.chatLock.create({ data: dto });
+    } catch (error: unknown) {
+      this.logger.error(
+        `Failed to create schedule for chat ${dto.chatId}`,
+        error instanceof Error ? error.stack : error,
+      );
+
+      if (isPrismaClientExceptionWithCode(error, 'P2002')) {
+        throw new ScheduleConflictError(dto.chatId);
+      }
+      throw error;
     }
+  }
 
-    async createLock(dto: CreateLockDto) {
-        try {
-            return await this.prisma.chatLock.create({ data: dto });
-        } catch (error) {
-            this.logger.error(`Failed to create schedule for chat ${dto.chatId}`, error.stack);
-            if (error.code === 'P2002') {
-                throw new ConflictException('A schedule already exists for this chat.');
-            }
-            throw error;
-        }
+  async removeLock(chatId: string): Promise<ChatLock> {
+    try {
+      return await this.prisma.chatLock.delete({ where: { chatId } });
+    } catch (error) {
+      this.logger.error(
+        `Failed to drop schedule registry for chat ${chatId}`,
+        error instanceof Error ? error.stack : String(error),
+      );
+
+      if (isPrismaClientExceptionWithCode(error, 'P2025')) {
+        throw new ScheduleNotFoundError(chatId);
+      }
+      throw error;
     }
+  }
 
-    async removeLock(chatId: string) {
-        try {
-            return await this.prisma.chatLock.delete({ where: { chatId } });
-        } catch (error) {
-            this.logger.error(`Failed to drop schedule registry for chat ${chatId}`, error.stack);
-            if (error.code === 'P2025') {
-                throw new NotFoundException('No schedule found for this chat.');
-            }
-            throw error;
-        }
+  async findLock(chatId: string): Promise<ChatLock> {
+    try {
+      const lock = await this.prisma.chatLock.findUnique({ where: { chatId } });
+
+      if (!lock) {
+        this.logger.warn(
+          `Schedule lookup failed: No database record exists for chat ${chatId}`,
+        );
+        throw new ScheduleNotFoundError(chatId);
+      }
+
+      return lock;
+    } catch (error: unknown) {
+      if (!(error instanceof ScheduleNotFoundError)) {
+        this.logger.error(
+          `Database adapter exception during lookup on chat: ${chatId}`,
+          error instanceof Error ? error.stack : error,
+        );
+      }
+      throw error;
     }
+  }
 
-    async findLock(chatId: string) {
-        try {
-            const lock = await this.prisma.chatLock.findUnique({ where: { chatId } });
-
-            if (!lock) {
-                this.logger.warn(`Schedule lookup failed: No database record exists for chat ${chatId}`);
-                throw new NotFoundException('No schedule found for this chat.');
-            }
-
-            return lock;
-        } catch (error) {
-            if (!(error instanceof NotFoundException)) {
-                this.logger.error(
-                    `Database retrieval exception encountered while fetching schedule for chat ${chatId}`,
-                    error.stack
-                );
-            }
-            throw error;
-        }
-    }
-
-    async findPendingLocks(): Promise<ChatLock[]> {
-        try {
-            return this.prisma.$queryRaw<ChatLock[]>`
+  async findPendingLocks(): Promise<ChatLock[]> {
+    try {
+      return await this.prisma.$queryRaw<ChatLock[]>`
             SELECT * FROM "ChatLock"
             WHERE "isLocked" = false
               AND (
@@ -91,15 +94,18 @@ export class ChatLockService {
                     )
                 )
         `;
-        } catch (error) {
-            this.logger.error('Database connection breakdown or syntax failure inside raw findPendingLocks delta loop', error.stack);
-            throw error;
-        }
+    } catch (error: unknown) {
+      this.logger.error(
+        'Database query processing failure during findPendingLocks pipeline evaluation',
+        error instanceof Error ? error.stack : error,
+      );
+      throw error;
     }
+  }
 
-    async findPendingUnlocks(): Promise<ChatLock[]> {
-        try {
-            return this.prisma.$queryRaw<ChatLock[]>`
+  async findPendingUnlocks(): Promise<ChatLock[]> {
+    try {
+      return await this.prisma.$queryRaw<ChatLock[]>`
             SELECT * FROM "ChatLock"
             WHERE "isLocked" = true
               AND NOT (
@@ -120,37 +126,64 @@ export class ChatLockService {
                     )
                 )
         `;
-        } catch (error) {
-            this.logger.error('Database connection breakdown or syntax failure inside raw findPendingUnlocks delta loop', error.stack);
-            throw error;
-        }
+    } catch (error: unknown) {
+      this.logger.error(
+        'Database query processing failure during findPendingUnlocks pipeline evaluation',
+        error instanceof Error ? error.stack : error,
+      );
+      throw error;
     }
+  }
 
-    async tryTransitionToLocked(chatId: string): Promise<boolean> {
-        const result = await this.prisma.chatLock.updateMany({
-            where: { chatId, isLocked: false },
-            data: { isLocked: true, lockedAt: new Date() },
-        });
-        const success = result.count > 0;
-        if (success) {
-            this.logger.log(`Mutex Claimed: Chat ${chatId} locked successfully in database.`);
-        } else {
-            this.logger.warn(`Mutex Skipped: Chat ${chatId} state change was already captured by another execution node replica.`);
-        }
-        return success;
+  async tryTransitionToLocked(chatId: string): Promise<boolean> {
+    try {
+      const result = await this.prisma.chatLock.updateMany({
+        where: { chatId, isLocked: false },
+        data: { isLocked: true, lockedAt: new Date() },
+      });
+      const success = result.count > 0;
+      if (success) {
+        this.logger.log(
+          `Mutex Claimed: Chat ${chatId} locked successfully in database.`,
+        );
+      } else {
+        this.logger.warn(
+          `Mutex Skipped: Chat ${chatId} state change was already captured by another execution node replica.`,
+        );
+      }
+      return success;
+    } catch (error: unknown) {
+      this.logger.error(
+        `Critical exception during mutate claim tryTransitionToLocked for chat ${chatId}`,
+        error instanceof Error ? error.stack : error,
+      );
+      return false;
     }
+  }
 
-    async tryTransitionToUnlocked(chatId: string): Promise<boolean> {
-        const result = await this.prisma.chatLock.updateMany({
-            where: { chatId, isLocked: true },
-            data: { isLocked: false, lockedAt: new Date() },
-        });
-        const success = result.count > 0;
-        if (success) {
-            this.logger.log(`Mutex Claimed: Chat ${chatId} unlocked successfully in database.`);
-        } else {
-            this.logger.warn(`Mutex Skipped: Chat ${chatId} state change was already captured by another execution node replica.`);
-        }
-        return success;
+  async tryTransitionToUnlocked(chatId: string): Promise<boolean> {
+    try {
+      const result = await this.prisma.chatLock.updateMany({
+        where: { chatId, isLocked: true },
+        data: { isLocked: false, lockedAt: new Date() },
+      });
+      const success = result.count > 0;
+      if (success) {
+        this.logger.log(
+          `Mutex Claimed: Chat ${chatId} unlocked safely in database layer.`,
+        );
+      } else {
+        this.logger.warn(
+          `Mutex Skipped: Chat ${chatId} transition concurrently written by another node.`,
+        );
+      }
+      return success;
+    } catch (error: unknown) {
+      this.logger.error(
+        `Critical exception during mutate claim tryTransitionToUnlocked for chat ${chatId}`,
+        error instanceof Error ? error.stack : error,
+      );
+      return false;
     }
+  }
 }
