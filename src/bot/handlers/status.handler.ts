@@ -7,9 +7,10 @@ import { ScheduleNotFoundError } from '../../common/errors/schedule-not-found.er
 
 @Injectable()
 export class StatusHandler {
-  private readonly logger: AppLogger;
-
-  constructor(private readonly chatLockService: ChatLockService) {
+  constructor(
+    private readonly logger: AppLogger,
+    private readonly chatLockService: ChatLockService,
+  ) {
     this.logger.setContext(StatusHandler.name);
   }
 

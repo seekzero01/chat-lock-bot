@@ -7,9 +7,10 @@ import { ScheduleConflictError } from '../../common/errors/schedule-conflict.err
 
 @Injectable()
 export class SetHandler {
-  private readonly logger: AppLogger;
-
-  constructor(private readonly chatLockService: ChatLockService) {
+  constructor(
+    private readonly logger: AppLogger,
+    private readonly chatLockService: ChatLockService,
+  ) {
     this.logger.setContext(SetHandler.name);
   }
 

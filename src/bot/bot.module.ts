@@ -9,6 +9,7 @@ import { HelpHandler } from './handlers/help.handler';
 import { TelegrafModule } from 'nestjs-telegraf';
 import { session } from 'telegraf';
 import { StatusHandler } from './handlers/status.handler';
+import { AppLogger } from '../logger/app-logger.service';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { StatusHandler } from './handlers/status.handler';
     SetHandler,
     UnlockHandler,
     AdminGuard,
+    AppLogger,
   ],
 })
 export class BotModule {}
